@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, Response
 
-from app.models.admin import AdminLoginDatas
+from app.models.reader import ReaderLoginDatas
 from app.db.session import get_db
-from app.services.admin_auth import login
+from app.services.auth.reader_auth import login
 from app.services.generate_jwt import create_access_token
 
 import json
@@ -13,10 +13,10 @@ router = APIRouter(
     tags=["login"])
 
 @router.post("/")
-async def login_post(ALDatas: AdminLoginDatas,
+async def login_post(RLDatas: ReaderLoginDatas,
                     response: Response,
                     db: AsyncGenerator = Depends(get_db)):
-    id_ = await login(db, ALDatas)
+    id_ = await login(db, RLDatas)
     if id_:
         id_ = str(id_)
         data = {"id":id_}
@@ -26,4 +26,4 @@ async def login_post(ALDatas: AdminLoginDatas,
         response.set_cookie(key="jwt", value=jwt, max_age=max_age)
         return {"data":id_}
     else:
-        return {"data":None}
+        return {"data":"войти не удалось"}

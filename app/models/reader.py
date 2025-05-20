@@ -6,8 +6,8 @@ from sqlalchemy import String, Column
 from pydantic import BaseModel
 
 # DATA BASE MODELS
-class AdminBase(Base):
-    __tablename__ = "admin"
+class ReaderBase(Base):
+    __tablename__ = "reader"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     username: Mapped[str] = mapped_column(String)
@@ -18,12 +18,12 @@ class AdminBase(Base):
 
 
 # pydantic.BaseModel MODELS
-class AdminRegisterDatas(BaseModel):
+class ReaderRegisterDatas(BaseModel):
 	password: str
 	email: str
 	username: str
 
-class AdminLoginDatas(BaseModel):
+class ReaderLoginDatas(BaseModel):
 	password: str
 	email: str
 
