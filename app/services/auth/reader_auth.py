@@ -6,7 +6,7 @@ from typing import AsyncGenerator
 async def register(db: AsyncGenerator, RRDatas: ReaderRegisterDatas):
 	dbm = DataBaseManager(db)
 	try:
-		return await dbm.create_user(RRDatas)
+		return await dbm.create(RRDatas)
 	except Exception as e:
 		return None
 

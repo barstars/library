@@ -1,11 +1,10 @@
 from fastapi import APIRouter, Depends, Cookie
 
-from app.models.reader import ReaderRegisterDatas
+from app.models.book import BookRegisterDatas
 from app.db.session import get_db
 from app.services.verification import is_admin
-from app.services.auth.reader_auth import register
+from app.services.auth.book_auth import register
 
-import json
 from typing import AsyncGenerator
 
 router = APIRouter(
@@ -13,14 +12,14 @@ router = APIRouter(
 	tags=["register"])
 
 @router.post("/")
-async def register_post(RRDatas: ReaderRegisterDatas,
+async def register_post(BRDatas: BookRegisterDatas,
 						db: AsyncGenerator = Depends(get_db),
 						jwt: str = Cookie(None)):
 	if await is_admin(db, jwt):
-		id_ = await register(db, RRDatas)
+		id_ = await register(db, BRDatas)
 		if id_:
 			return {"data":"зарегистрирован"}
 		else:
-			return {"data":"email уже существует"}
+			return {"data":"ISBN уже существует"}
 	else:
 		return {"data":"вы не администратор"}

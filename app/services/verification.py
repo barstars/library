@@ -1,5 +1,6 @@
-from app.db.crud.admin import DataBaseManager as ADataBaseManager
-from app.db.crud.reader import DataBaseManager as RDataBaseManager
+from app.db.crud.admin import DataBaseManager as AdminDBM
+from app.db.crud.reader import DataBaseManager as ReaderDBM
+from app.db.crud.book import DataBaseManager as BookDBM
 
 from .generate_jwt import decode_access_token
 
@@ -12,10 +13,10 @@ async def is_admin(db: AsyncGenerator, jwt: str) -> bool:
 	if data:
 		id_ = data.get("id")
 		if id_:
-			dbm = ADataBaseManager(db)
+			dbm = AdminDBM(db)
 			datas = await dbm.get_by_id(id_)
 			if datas:
-				return True
+				return datas
 			else:
 				return False
 		else:
@@ -28,10 +29,26 @@ async def is_reader(db: AsyncGenerator, jwt: str) -> bool:
 	if data:
 		id_ = data.get("id")
 		if id_:
-			dbm = RDataBaseManager(db)
+			dbm = ReaderDBM(db)
 			datas = await dbm.get_by_id(id_)
 			if datas:
-				return True
+				return datas
+			else:
+				return False
+		else:
+			return False
+	else:
+		return False
+
+async def is_book(db: AsyncGenerator, jwt: str) -> bool:
+	data = await decode_access_token(jwt)
+	if data:
+		id_ = data.get("id")
+		if id_:
+			dbm = BookDBM(db)
+			datas = await dbm.get_by_id(id_)
+			if datas:
+				return datas
 			else:
 				return False
 		else:

@@ -10,7 +10,7 @@ class DataBaseManager:
 	def __init__(self, db: AsyncGenerator):
 		self.db = db
 
-	async def create_user(self, RRDatas: ReaderRegisterDatas):
+	async def create(self, RRDatas: ReaderRegisterDatas):
 		datas =RRDatas.model_dump()
 		password = datas.pop("password")
 
