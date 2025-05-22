@@ -16,12 +16,15 @@ class DataBaseManager:
 		await self.db.commit()
 		return BBase.id
 
-	async def copies_add(self, id_: str) -> bool:
+	async def copies_add(self, id_: str, copies:int=1) -> bool:
 		curr = await self.get_by_id(id_)
 		if curr:
-			await curr.copies_add()
-			await self.db.commit()
-			return True
+			if (curr.copies + copies >= 0):
+				await curr.copies_add(copies)
+				await self.db.commit()
+				return True
+			else:
+				return False
 		else:
 			return False
 

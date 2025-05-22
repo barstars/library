@@ -23,9 +23,6 @@ class NewBorrowedBook:
 		is_reader_borrowed_this_book = await self.borrow_book_dbm.is_reader_borrowed_this_book(reader_id,book_id)
 
 		if (book_base.copies == 0) or (reader_active_books_count == 3) or is_reader_borrowed_this_book:
-			print("book_base.copies:",book_base.copies)
-			print("reader_active_books_count:",reader_active_books_count)
-			print("is_reader_borrowed_this_book:",is_reader_borrowed_this_book)
 			return False
 
 		return await self.add_borrow(book_id=book_id, reader_id=reader_id)

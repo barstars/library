@@ -17,8 +17,8 @@ class BookBase(Base):
     isbn: Mapped[Optional[str]] = mapped_column(String, unique=True, nullable=True)
     copies: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
 
-    async def copies_add(self):
-        self.copies += 1
+    async def copies_add(self, copies: int):
+        self.copies += copies
 
     async def copies_reduce(self):
         self.copies -= 1
@@ -37,6 +37,10 @@ class BookRegisterDatas(BaseModel):
     year: Optional[int] = None
     isbn: Optional[str] = None
     copies: Optional[int] = 1
+
+class AddCopiesDatas(BaseModel):
+    id: str
+    copies: int
 
 class BookOUT(BaseModel):
     id: uuid.UUID
