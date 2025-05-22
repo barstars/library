@@ -17,8 +17,11 @@ async def register_post(BRDatas: BookRegisterDatas,
 						jwt: str = Cookie(None)):
 	if await is_admin(db, jwt):
 		id_ = await register(db, BRDatas)
+
 		if id_:
 			return {"data":"зарегистрирован"}
+		elif id_ == False:
+			return {"data":"Экземпляр (copies) не могуд быт меньше нуля"}
 		else:
 			return {"data":"ISBN уже существует"}
 	else:

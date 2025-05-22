@@ -45,3 +45,9 @@ class DataBaseManager:
 		result = await self.db.execute(select(BookBase).where(BookBase.id == UUID(id_)))
 		curr = result.scalars().first()
 		return curr
+
+	async def get_info(self, id_: str):
+		result = await self.db.execute(select(BookBase).where(BookBase.id == UUID(id_)))
+		curr = result.scalars().first()
+		info = await curr.get_info()
+		return info

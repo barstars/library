@@ -23,6 +23,11 @@ class BookBase(Base):
     async def copies_reduce(self):
         self.copies -= 1
 
+    async def get_info(self):
+        return {"name":self.name,
+                "author":self.author,
+                "year":self.year}
+
 #########################
 
 # pydantic.BaseModel MODELS
@@ -33,7 +38,7 @@ class BookRegisterDatas(BaseModel):
     isbn: Optional[str] = None
     copies: Optional[int] = 1
 
-class BookDB_for_pydantic(BaseModel):
+class BookOUT(BaseModel):
     id: uuid.UUID
     name: str
     author: str
@@ -43,6 +48,5 @@ class BookDB_for_pydantic(BaseModel):
 
     class Config:
         from_attributes=True
-
 
 #########################

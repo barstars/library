@@ -24,7 +24,7 @@ async def borrow_book_post(BRDatas: BorrowedBookDatas,
 			id_ = await new_borrowed_book.new_borrow(reader_base=reader_base, book_base=book_base)
 
 			if id_:
-				return {"data":id_}
+				return {"data":"книга получено"}
 			else:
 				return {"data":"книга не получено"}
 		else:

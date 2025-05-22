@@ -18,7 +18,12 @@ class BorrowedBookBase(Base):
     return_date: Mapped[datetime.datetime | None] = mapped_column(DateTime, nullable=True)
 
     async def return_data_update(self):
-    	self.return_date = datetime.datetime.utcnow
+    	self.return_date = datetime.datetime.utcnow()
+
+    async def get_info(self):
+        return {"id":self.id,
+                "borrow_date":self.borrow_date,
+                "return_date":self.return_date}
 
 #########################
 
