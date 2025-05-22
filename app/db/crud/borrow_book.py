@@ -1,6 +1,6 @@
 from app.models.borrow_book import BorrowedBookBase, BorrowNewBook
 
-from sqlalchemy import select#, and_
+from sqlalchemy import select
 
 from typing import AsyncGenerator
 from uuid import UUID
@@ -36,6 +36,11 @@ class DataBaseManager:
 			return True
 		else:
 			return False
+
+	async def return_book(self, id_: str):
+		curr = await self.get_by_id(id_)
+		await curr.return_data_update()
+		await self.db.commit()
 
 	async def get_info(self, id_: str):
 		result = await self.db.execute(select(BorrowedBookBase).where(BorrowedBookBase.id == UUID(id_)))

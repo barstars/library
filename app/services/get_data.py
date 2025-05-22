@@ -12,13 +12,16 @@ async def get_all_books(db: AsyncGenerator):
 
     books = []
     for book in booksDB:
-        book_dict = await edit_id_for_jwt(key_name="id", dataOUT=BookOUT, dataDB=book)
-        books.append(book_dict)
+        book_dict = await db_to_dict(dataOUT=BookOUT, dataDB=book)
+        book_dict_jwt = await edit_id_for_jwt(data=book_dict, key_name="id")
+        books.append(book_dict_jwt)
     return books
 
-async def edit_id_for_jwt(dataOUT, dataDB, key_name: str = None) -> dict:
+async def db_to_dict(dataOUT, dataDB) -> dict:
     data_out_dict = dataOUT.from_orm(dataDB).model_dump()
-    if key_name:
-        jwt_id = await create_access_token({key_name: str(data_out_dict[key_name])})
-        data_out_dict[key_name] = jwt_id
     return data_out_dict
+
+async def edit_id_for_jwt(data: dict, key_name: str):
+    jwt = await create_access_token({key_name:str(data[key_name])})
+    data[key_name] = jwt
+    return data

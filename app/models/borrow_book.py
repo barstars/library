@@ -36,4 +36,7 @@ class BorrowNewBook(BaseModel):
 	reader_id: uuid.UUID
 	book_id: uuid.UUID
 
+class ReturnBookDatas(BaseModel):
+    id: str
+
 #########################
