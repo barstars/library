@@ -1,7 +1,7 @@
 from app.db.base import Base
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy import String, Integer
+from sqlalchemy import String, Integer, Text
 from pydantic import BaseModel
 import uuid
 from typing import Optional
@@ -16,6 +16,7 @@ class BookBase(Base):
     year: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     isbn: Mapped[Optional[str]] = mapped_column(String, unique=True, nullable=True)
     copies: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     async def copies_add(self, copies: int):
         self.copies += copies
@@ -37,6 +38,7 @@ class BookRegisterDatas(BaseModel):
     year: Optional[int] = None
     isbn: Optional[str] = None
     copies: Optional[int] = 1
+    description: Optional[str] = None
 
 class AddCopiesDatas(BaseModel):
     id: str
