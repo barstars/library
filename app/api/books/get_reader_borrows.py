@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, Cookie
+from fastapi.responses import JSONResponse
 
 from app.db.session import get_db
 from app.services.verification import is_reader
@@ -18,9 +19,10 @@ async def get_reader_borrows_post(db: AsyncGenerator = Depends(get_db),
 	if reader_base:
 		reader_id = str(reader_base.id)
 		get_reader_borrows = GetReaderBorrows(db)
-		return {"data":await get_reader_borrows.get_all_borrows(reader_id)}
+		return JSONResponse(status_code=200, content={"success":True,"message":"Успех",
+			"data":await get_reader_borrows.get_all_borrows(reader_id)})
 	else:
-		return {"data":"вы не читатель"}
+		return JSONResponse(status_code=400, content={"success":False,"message":"вы не читатель"})
 
 @router.get("/active")
 async def get_reader_borrows_post(db: AsyncGenerator = Depends(get_db),
@@ -30,6 +32,7 @@ async def get_reader_borrows_post(db: AsyncGenerator = Depends(get_db),
 	if reader_base:
 		reader_id = str(reader_base.id)
 		get_reader_borrows = GetReaderBorrows(db)
-		return {"data":await get_reader_borrows.get_active_borrows(reader_id)}
+		return JSONResponse(status_code=200, content={"success":True,"message":"Успех",
+			"data":await get_reader_borrows.get_active_borrows(reader_id)})
 	else:
-		return {"data":"вы не читатель"}
+		return JSONResponse(status_code=400, content={"success":False,"message":"вы не читатель"})

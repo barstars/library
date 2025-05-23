@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, Cookie
+from fastapi.responses import JSONResponse
 
 from app.models.borrow_book import BorrowedBookDatas
 from app.db.session import get_db
@@ -24,10 +25,10 @@ async def borrow_book_post(BRDatas: BorrowedBookDatas,
 			id_ = await new_borrowed_book.new_borrow(reader_base=reader_base, book_base=book_base)
 
 			if id_:
-				return {"data":"книга получено"}
+				return JSONResponse(status_code=200, content={"success":True,"message":"Книга получено"})
 			else:
-				return {"data":"книга не получено"}
+				return JSONResponse(status_code=400, content={"success":False,"message":"книга не получено"})
 		else:
-			return {"data":"книга не существует"}
+			return JSONResponse(status_code=400, content={"success":False,"message":"книга не существует"})
 	else:
-		return {"data":"вы не читатель"}
+		return JSONResponse(status_code=400, content={"success":False,"message":"вы не читатель"})

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, Cookie
+from fastapi.responses import JSONResponse
 
 from app.models.book import BookRegisterDatas, AddCopiesDatas
 from app.db.session import get_db
@@ -17,15 +18,15 @@ async def register_post(BRDatas: BookRegisterDatas,
 						jwt: str = Cookie(None)):
 	if await is_admin(db, jwt):
 		id_ = await register(db, BRDatas)
-
 		if id_:
-			return {"data":"зарегистрирован"}
+			return JSONResponse(status_code=200, content={"success":True,"message":"зарегистрирован"})
 		elif id_ == False:
-			return {"data":"Экземпляр (copies) не могуд быт меньше нуля"}
+			return JSONResponse(status_code=400, content={"success":False,"message":"Экземпляр (copies) не могуд быт меньше нуля"})
 		else:
-			return {"data":"ISBN уже существует"}
+			return JSONResponse(status_code=400, content={"success":False,"message":"ISBN уже существует"})
 	else:
-		return {"data":"вы не администратор"}
+		return JSONResponse(status_code=400, content={"success":False,"message":"вы не администратор"})
+
 
 @router.post("/add")
 async def add_copies_post(ACDatas: AddCopiesDatas,
@@ -35,12 +36,12 @@ async def add_copies_post(ACDatas: AddCopiesDatas,
 		bookDB = await is_book(db, ACDatas.id)
 		if bookDB:
 			id_ = await add_copies_for_book(db, book_id=str(bookDB.id), copies=ACDatas.copies)
-
 			if id_:
-				return {"data":"добавлено"}
+				return JSONResponse(status_code=200, content={"success":True,"message":"добавлено"})
 			else:
-				return {"data":"не возможно добавить экземпляр"}
+				return JSONResponse(status_code=400, content={"success":False,"message":"не возможно добавить экземпляр"})
 		else:
-			return {"data":"книга не найдена"}
+			return JSONResponse(status_code=400, content={"success":False,"message":"книга не найдена"})
 	else:
-		return {"data":"вы не администратор"}
+		return JSONResponse(status_code=400, content={"success":False,"message":"вы не администратор"})
+

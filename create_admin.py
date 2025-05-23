@@ -10,14 +10,13 @@ async def run():
 	async for db in get_db():
 	    dbm = DataBaseManager(db)
 
-	    username = "admin" #input("Username")
-	    email = "admin@gmail.com" #input("Email")
-	    password = "admin" #input("Password")
+	    username = input("Username: ")
+	    email = input("Email: ")
+	    password = input("Password: ")
 
 	    ARDatas = AdminRegisterDatas(username=username,email=email,password=password)
-	    id_ = await dbm.create_user(ARDatas)
-	    print(id_)
-	    print(type(id_))
+	    id_ = await dbm.create(ARDatas)
+	    print("Success")
 
 
 asyncio.run(run())

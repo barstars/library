@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, Request, Cookie
+from fastapi.responses import JSONResponse
 
 from app.models.admin import AdminRegisterDatas
 from app.db.session import get_db
@@ -20,8 +21,8 @@ async def register_post(ARDatas: AdminRegisterDatas,
 	if await is_admin(db, jwt):
 		id_ = await register(db, ARDatas)
 		if id_:
-			return {"data":"зарегистрирован"}
+			return JSONResponse(status_code=200, content={"success":True,"message":"зарегистрирован"})
 		else:
-			return {"data":"email уже существует"}
+			return JSONResponse(status_code=400, content={"success":False,"message":"email уже существует"})
 	else:
-		return {"data":"вы не администратор"}
+		return JSONResponse(status_code=400, content={"success":False,"message":"вы не администратор"})

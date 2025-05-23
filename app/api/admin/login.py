@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, Response
+from fastapi.responses import JSONResponse
 
 from app.models.admin import AdminLoginDatas
 from app.db.session import get_db
@@ -23,7 +24,8 @@ async def login_post(ALDatas: AdminLoginDatas,
         jwt = await create_access_token(data)
         month = 5
         max_age = (((60*60)*24)*(30*month))
+        response = JSONResponse(status_code=200, content={"success":True,"message":"вы вошли"})
         response.set_cookie(key="jwt", value=jwt, max_age=max_age)
-        return {"data":id_}
+        return response
     else:
-        return {"data":"войти не удалось"}
+        return JSONResponse(status_code=400, content={"success":False,"message":"войти не удалось"})

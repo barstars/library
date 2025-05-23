@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from fastapi.responses import JSONResponse
 
 from app.db.session import get_db
 from app.services.get_data import get_all_books
@@ -12,4 +13,5 @@ router = APIRouter(
 @router.get("/")
 async def get_books(db: AsyncGenerator = Depends(get_db)):
 	books = await get_all_books(db)
-	return {"books":books}
+	return JSONResponse(status_code=200, content={"success":True,"message":"Успех",
+		"data":books})
