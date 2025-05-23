@@ -1,6 +1,6 @@
 from app.models.borrow_book import BorrowedBookBase, BorrowNewBook
 
-from sqlalchemy import select
+from sqlalchemy import select, delete
 
 from typing import AsyncGenerator
 from uuid import UUID
@@ -47,6 +47,14 @@ class DataBaseManager:
 		curr = result.scalars().first()
 		info = await curr.get_info()
 		return info
+
+	async def get_all_borrow_by_book(self, book_id: str):
+		result = await self.db.execute(select(BorrowedBookBase).where(BorrowedBookBase.book_id == UUID(book_id)))
+		return result.scalars().all()
+
+	async def delete_by_all_book(self, book_id: str):
+		borrows = await self.db.execute(delete(BorrowedBookBase).where(BorrowedBookBase.book_id == UUID(book_id)))
+		await self.db.commit()
 
 	async def get_by_id(self, id_: str):
 		result = await self.db.execute(select(BorrowedBookBase).where(BorrowedBookBase.id == UUID(id_)))

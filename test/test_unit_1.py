@@ -1,175 +1,115 @@
 from fastapi.testclient import TestClient
 from app.main import app
 
-import uuid
-
-
 client = TestClient(app)
 
 
-
 def test():
-    # 1: Пытаемся регистрировать админ без jwt
-    # 1.1: новый админ регистрируем
+    # 1. Попытка регистрации администратора без JWT
     res = client.post("/admin/register", json={
-        "username":"new_admin",
+        "username": "new_admin",
         "email": "new_admin",
         "password": "new_admin"
     })
-    print(res.json())
     assert res.status_code == 400
-    assert False == res.json()['success']
+    assert res.json()['success'] is False
 
-    # 1.2: Попытка регистраций существуещего админа
+    # 2. Регистрация существующего администратора без JWT
     res = client.post("/admin/register", json={
-        "username":"admin",
+        "username": "admin",
         "email": "admin",
         "password": "admin"
     })
-    print(res.json())
     assert res.status_code == 400
-    assert False == res.json()['success']
+    assert res.json()['success'] is False
 
-    # Логин на админ
+    # 3. Логин администратора
     res = client.post("/admin/login", json={
         "email": "admin",
         "password": "admin"
     })
-    print(res.json())
     assert res.status_code == 200
-    print(res.cookies)
-    jwt = res.cookies.get("jwt")
-    assert True == res.json()['success']
+    assert res.json()['success'] is True
+    jwt_admin = res.cookies.get("jwt")
+    
 
-    # Создания читателя
-    res = client.post("/reader/register", cookies={"jwt":jwt}, json={
-        "username":"pipl",
-        "email": "pipl",
-        "password": "pipl"
-    })
-    print(res.json())
+    assert jwt_admin is not None
+
+    # 4. Создание читателя
+    res = client.post("/reader/register", json={"username":"pipl", "email":"pipl", "password":"pipl"})
     assert res.status_code == 200
-    assert True == res.json()['success']
+    assert res.json()['success'] is True
 
-    # Создания книги
-    res = client.post("/book/register", cookies={"jwt":jwt}, json={
-        "name":"first",
-        "author": "admin",
-        "copies": 5
-    })
-    print(res.json())
-    assert res.status_code == 200
-    assert True == res.json()['success']
+    # 5. Регистрация книг
+    book_names = ["first", "second", "third", "fourth"]
+    for name in book_names:
+        res = client.post("/book/register", json={
+            "name": name,
+            "author": "admin",
+            "copies": 5
+        })
+        assert res.status_code == 200
+        assert res.json()['success'] is True
 
-    res = client.post("/book/register", cookies={"jwt":jwt}, json={
-        "name":"asd",
+    # 6. Попытка регистрации книги
+    res = client.post("/book/register", json={
+        "name": "invalid",
         "author": "admin",
         "copies": -1
     })
-    print(res.json())
     assert res.status_code == 400
-    assert False == res.json()['success']
+    assert res.json()['success'] is False
 
-    res = client.post("/book/register", cookies={"jwt":jwt}, json={
-        "name":"2",
-        "author": "admin",
-        "copies": 5
-    })
-    print(res.json())
-    assert res.status_code == 200
-    assert True == res.json()['success']
-
-    res = client.post("/book/register", cookies={"jwt":jwt}, json={
-        "name":"3",
-        "author": "admin",
-        "copies": 5
-    })
-    print(res.json())
-    assert res.status_code == 200
-    assert True == res.json()['success']
-
-    res = client.post("/book/register", cookies={"jwt":jwt}, json={
-        "name":"4",
-        "author": "admin",
-        "copies": 5
-    })
-    print(res.json())
-    assert res.status_code == 200
-    assert True == res.json()['success']
-
-    # Login как читатель
+    # 7. Логин как читатель
     res = client.post("/reader/login", json={
-        "username":"pipl",
+        "username": "pipl",
         "email": "pipl"
     })
-    print(res.json())
     assert res.status_code == 200
-    jwt = res.cookies.get("jwt")
-    assert True == res.json()['success']
+    jwt_reader = res.cookies.get("jwt")
+    
+    assert jwt_reader is not None
 
-    # Взять книгу
-    # Узнать все книги
+    # 8. Получение всех книг
     res = client.get("/book/")
-    print(res.json())
     assert res.status_code == 200
-    assert True == res.json()['success']
-    books = res.json()["data"]
+    assert res.json()['success'] is True
+    books = res.json()['data']
 
-    # Попытки взять всех книг то есть больше 3
-    count_book = 0
-    for book in range(len(books)):
-        res = client.post("/book/borrow", cookies={"jwt":jwt}, json={"id":str(book.get("id"))})
-        if count_book < 3:
-            count_book += 1
-            print(res.json())
+    # 9. Попытка взять более 3 книг читателем
+    for i, book in enumerate(books):
+        res = client.post("/book/borrow", json={"id": book["id"]})
+        if i < 3:
             assert res.status_code == 200
-    
-            assert True == res.json()['success']
+            assert res.json()['success'] is True
         else:
-            print(res.json())
             assert res.status_code == 400
+            assert res.json()['success'] is False
+
+    # 10. Проверка активных книг читателя
+    res = client.post("/book/getborrows/active")
+    assert res.status_code == 200
+    assert res.json()['success'] is True
+    assert len(res.json()['data']) == 3
+
+    # 11. Логин админа и удаление книг
+    res = client.post("/admin/login", json={"email": "admin", "password": "admin"})
+    jwt_admin = res.cookies.get("jwt")
     
-            assert False == res.json()['success']
 
-    # Логин на админ
-    res = client.post("/admin/login", json={
-        "email": "admin",
-        "password": "admin"
-    })
-    print(res.json())
+    # Удаление книги, которая не выдана
+    res = client.post("/book/delete", json={"id": books[-1]["id"]})
     assert res.status_code == 200
-    jwt = res.cookies.get("jwt")
-    assert True == res.json()['success']
+    assert res.json()['success'] is True
 
-    # Удаление книги который нет в связи borrow
-    res = client.post("/admin/login", cookies={"jwt":jwt}, json={
-        "id": books[-1]["id"]})
-    print(res.json())
+    # Удаление книги, которая уже выдана
+    res = client.post("/book/delete", json={"id": books[0]["id"]})
+    assert res.status_code == 400  # допустим, не может удалить выданную книгу
+    assert res.json()['success'] is False
+
+    # Проверка активных книг читателя
+    
+    res = client.post("/book/getborrows/active")
     assert res.status_code == 200
-    assert True == res.json()['success']
-
-    # Удаление книги который есть в связи borrow
-    res = client.post("/admin/login", cookies={"jwt":jwt}, json={
-        "id": books[0]["id"]})
-    print(res.json())
-    assert res.status_code == 200
-    assert True == res.json()['success']
-
-    # Login как читатель
-    res = client.post("/reader/login", json={
-        "username":"pipl",
-        "email": "pipl"
-    })
-    print(res.json())
-    assert res.status_code == 200
-    jwt = res.cookies.get("jwt")
-    assert True == res.json()['success']
-
-    # Взять все активные книги читателья
-    res = client.post("/book/getborrows/active", cookies={"jwt":jwt})
-    print(res.json())
-    assert res.status_code == 200
-    assert True == res.json()['success']
-    assert 2 == len(res.json()['data'])
-
-test()
+    assert res.json()['success'] is True
+    assert len(res.json()['data']) == 2

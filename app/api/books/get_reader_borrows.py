@@ -19,8 +19,8 @@ async def get_reader_borrows_post(db: AsyncGenerator = Depends(get_db),
 	if reader_base:
 		reader_id = str(reader_base.id)
 		get_reader_borrows = GetReaderBorrows(db)
-		return JSONResponse(status_code=200, content={"success":True,"message":"Успех",
-			"data":await get_reader_borrows.get_all_borrows(reader_id)})
+		data = await get_reader_borrows.get_all_borrows(reader_id)
+		return JSONResponse(status_code=200, content={"success":True,"message":"Успех", "data":data})
 	else:
 		return JSONResponse(status_code=400, content={"success":False,"message":"вы не читатель"})
 

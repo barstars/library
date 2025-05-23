@@ -49,6 +49,12 @@ class DataBaseManager:
 		curr = result.scalars().first()
 		return curr
 
+	async def delete(self, id_: str):
+		book = await self.get_by_id(id_)
+		await self.db.delete(book)
+		await self.db.commit()
+
+
 	async def get_info(self, id_: str):
 		result = await self.db.execute(select(BookBase).where(BookBase.id == UUID(id_)))
 		curr = result.scalars().first()

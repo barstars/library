@@ -34,7 +34,7 @@ ACCESS_TOKEN_EXPIRE_DAYS=30 # JWT Будет хранится 30 дней
 SECRET_KEY=supersecret      # Ключ для JWT
 HESHALGORITHM=HS256         # Алгоритм для JWT
 
-Затем нужно выполнить миграций Alembic
+Затем нужно выполнить миграций Alembic (Пока не работает)
 ```bash
 alembic upgrade head
 ```
@@ -337,3 +337,98 @@ bcrypt<4.1.0              -> откат версию чтобы passlib рабо
 ## Идея
 Возможность оценить книгу.
 Для реализаций нужно будет добавить несколько столбцов на БД. Для book столбец с средний оценкой и сколько человек оценил книгу. Он будет увеличоватся только тогда когда читатель возмёт эту книгу и оценит его, и тогда увеличется на 1 и изменится столбец с средний оценкой. А для borrowed_books нужно добавить оценку от читателья. И тогда пользватель могут потом изменить оценку или не оценить вообще.
+
+## Тестовые запросы и ответы
+
+curl -X 'POST' \
+  'http://127.0.0.1:8000/book/register/' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "name": "fourth",
+  "author": "admin",
+  "year": 0,
+  "copies": -1
+}'
+{
+  "success": false,
+  "message": "Экземпляр (copies) не могуд быт меньше нуля"
+}
+
+curl -X 'POST' \
+  'http://127.0.0.1:8000/book/register/' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "name": "jhbh",
+  "author": "admin",
+  "year": 0,
+  "copies": 0
+}'
+{
+  "success": true,
+  "message": "зарегистрирован"
+}
+
+curl -X 'POST' \
+  'http://127.0.0.1:8000/reader/login/' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "password": "pipl",
+  "email": "pipl"
+}'
+{
+  "success": true,
+  "message": "вы вошли"
+}
+
+curl -X 'GET' \
+  'http://127.0.0.1:8000/book/' \
+  -H 'accept: application/json'
+
+{
+  "success": true,
+  "message": "Успех",
+  "data": [
+    {
+      "id": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyZmFmZmZhLThhZWQtNDJiNS1iOWMyLTZhYWU0YTkwMWY0NCIsImV4cCI6MTc1MDU4Nzg3NH0.aElG5hp6JYzN9ZN0mDmcXJycLifm2zBwP1z_tqJLirU",
+      "name": "first",
+      "author": "admin",
+      "year": 0,
+      "isbn": null,
+      "copies": 5
+    }, ...
+
+
+curl -X 'POST' \
+  'http://127.0.0.1:8000/book/borrow/' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "id": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyZmFmZmZhLThhZWQtNDJiNS1iOWMyLTZhYWU0YTkwMWY0NCIsImV4cCI6MTc1MDU4Nzg3NH0.aElG5hp6JYzN9ZN0mDmcXJycLifm2zBwP1z_tqJLirU"
+}'
+{
+  "success": true,
+  "message": "Книга получено"
+}
+
+curl -X 'GET' \
+  'http://127.0.0.1:8000/book/getborrows/all' \
+  -H 'accept: application/json'
+{
+  "success": true,
+  "message": "Успех",
+  "data": [
+    {
+      "name": "first",
+      "author": "admin",
+      "year": 0,
+      "id": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjAxMzlkYmRiLTBlNjctNDdhMy1hMDk4LWEyMWUwZTJmM2RmZCIsImV4cCI6MTc1MDU5MTEzOX0.Ie8Pjf2v3MDskR16OkGI7aeDXzbqxmskiliUDk57d5o",
+      "borrow_date": "2025-05-23 10:25:49.521036",
+      "return_date": null
+    }
+  ]
+}
+
+

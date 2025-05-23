@@ -42,6 +42,9 @@ class AddCopiesDatas(BaseModel):
     id: str
     copies: int
 
+class DeleteBookDatas(BaseModel):
+    id: str
+
 class BookOUT(BaseModel):
     id: uuid.UUID
     name: str

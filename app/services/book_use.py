@@ -47,19 +47,21 @@ class NewBorrowedBook:
 class GetReaderBorrows:
 	def __init__(self, db: AsyncGenerator):
 		self.db = db
-		self.borrow_book_dbm = borrow_book.DataBaseManager(self.db)
 
 
 	async def get_all_borrows(self, reader_id: str) -> list:
+		borrow_book_dbm = borrow_book.DataBaseManager(self.db)
 		book_dbm = book.DataBaseManager(self.db)
-		borrowDB_list = await self.borrow_book_dbm.get_reader_all_books(reader_id)
+
+		borrowDB_list = await borrow_book_dbm.get_reader_all_books(reader_id)
 
 		books_info = []
 		for borrowDB in borrowDB_list:
 
-			borrow_book_info_dict = await self.borrow_book_dbm.get_info(str(borrowDB.id))
-			book_info_dict = await book_dbm.get_info(str(borrowDB.book_id))
+			borrow_book_info_dict = await borrow_book_dbm.get_info(str(borrowDB.id))
 			jwt_borrow_info = await edit_id_for_jwt(data=borrow_book_info_dict, key_name="id")
+
+			book_info_dict = await book_dbm.get_info(str(borrowDB.book_id))
 
 			book_info_dict.update(jwt_borrow_info)
 			books_info.append(book_info_dict)
@@ -68,13 +70,16 @@ class GetReaderBorrows:
 
 	async def get_active_borrows(self, reader_id: str) -> list:
 		book_dbm = book.DataBaseManager(self.db)
-		borrowDB_list = await self.borrow_book_dbm.get_reader_active_books(reader_id)
+		borrow_book_dbm = borrow_book.DataBaseManager(self.db)
+		borrowDB_list = await borrow_book_dbm.get_reader_active_books(reader_id)
 		books_info = []
 		for borrowDB in borrowDB_list:
 
-			borrow_book_info_dict = await self.borrow_book_dbm.get_info(str(borrowDB.id))
-			book_info_dict = await book_dbm.get_info(str(borrowDB.book_id))
+			borrow_book_info_dict = await borrow_book_dbm.get_info(str(borrowDB.id))
 			jwt_borrow_info = await edit_id_for_jwt(data=borrow_book_info_dict, key_name="id")
+			
+			book_info_dict = await book_dbm.get_info(str(borrowDB.book_id))
+			
 
 			book_info_dict.update(jwt_borrow_info)
 			books_info.append(book_info_dict)

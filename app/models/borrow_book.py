@@ -21,8 +21,13 @@ class BorrowedBookBase(Base):
     	self.return_date = datetime.datetime.utcnow()
 
     async def get_info(self):
-        return {"id":self.id,
-                "borrow_date":self.borrow_date,
+        if self.return_date:
+            return {"id":self.id,
+                "borrow_date":str(self.borrow_date),
+                "return_date":str(self.return_date)}
+        else:
+            return {"id":self.id,
+                "borrow_date":str(self.borrow_date),
                 "return_date":self.return_date}
 
 #########################

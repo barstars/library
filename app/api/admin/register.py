@@ -18,6 +18,7 @@ async def register_post(ARDatas: AdminRegisterDatas,
 						request: Request,
 						db: AsyncGenerator = Depends(get_db),
 						jwt: str = Cookie(None)):
+	print(jwt)
 	if await is_admin(db, jwt):
 		id_ = await register(db, ARDatas)
 		if id_:
