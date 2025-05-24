@@ -39,7 +39,7 @@ SECRET_KEY=supersecret      # Ключ для JWT
 HESHALGORITHM=HS256         # Алгоритм для JWT
 ```
 
-Затем нужно выполнить миграций Alembic (Пока не работает):
+Затем нужно выполнить миграций Alembic:
 ```bash
 alembic upgrade head
 ```
