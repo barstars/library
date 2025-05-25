@@ -1,8 +1,8 @@
-"""add description to book
+"""Create description
 
-Revision ID: fa0d4fddf11a
-Revises: a747e5181f37
-Create Date: 2025-05-23 17:35:31.547566
+Revision ID: c1afd7db9af0
+Revises: 982e4d414fc3
+Create Date: 2025-05-25 23:07:06.130116
 
 """
 from typing import Sequence, Union
@@ -12,8 +12,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'fa0d4fddf11a'
-down_revision: Union[str, None] = 'a747e5181f37'
+revision: str = 'c1afd7db9af0'
+down_revision: Union[str, None] = '982e4d414fc3'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

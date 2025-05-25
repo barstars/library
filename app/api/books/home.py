@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 
 from app.db.session import get_db
-from app.services.get_data import get_all_books
+from app.services.book_use import get_all_books
 
 from typing import AsyncGenerator
 

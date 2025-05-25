@@ -3,10 +3,10 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
-from app.models.admin  import AdminBase              #noqa
 from app.models.book  import BookBase                #noqa
-from app.models.borrow_book  import BorrowedBookBase #noqa
 from app.models.reader  import ReaderBase            #noqa
+from app.models.admin  import AdminBase              #noqa
+from app.models.borrow_book  import BorrowedBookBase #noqa
 from app.db.base import Base
 
 from app.core.config import setting

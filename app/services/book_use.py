@@ -4,7 +4,7 @@ from app.models.reader import ReaderBase
 
 from app.db.crud import borrow_book, book
 
-from .get_data import edit_id_for_jwt
+from .edit_data import edit_id_for_jwt, db_to_dict
 
 from uuid import UUID
 from typing import AsyncGenerator
@@ -101,3 +101,16 @@ class ReturnBook:
 	async def add_copies(self, book_id: str):
 		book_dbm = book.DataBaseManager(self.db)
 		await book_dbm.copies_add(book_id)
+
+async def get_all_books(db: AsyncGenerator):
+    dbm = book.DataBaseManager(db)
+    booksDB = await dbm.fetch_all_books()
+    if not booksDB:
+        return None
+
+    books = []
+    for book in booksDB:
+        book_dict = await db_to_dict(dataOUT=BookOUT, dataDB=book)
+        book_dict_jwt = await edit_id_for_jwt(data=book_dict, key_name="id")
+        books.append(book_dict_jwt)
+    return books
