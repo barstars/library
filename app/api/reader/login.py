@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 
 from app.models.reader import ReaderLoginDatas
@@ -15,8 +15,13 @@ router = APIRouter(
 
 @router.post("/")
 async def login_post(RLDatas: ReaderLoginDatas,
-                    response: Response,
                     db: AsyncGenerator = Depends(get_db)):
+    """
+    Log in to the reader
+
+    db -- Session from the database
+    RLDatas -- Data for login
+    """
     id_ = await login(db, RLDatas)
     if id_:
         id_ = str(id_)

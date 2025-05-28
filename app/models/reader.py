@@ -7,6 +7,9 @@ from pydantic import BaseModel
 
 # DATA BASE MODELS
 class ReaderBase(Base):
+	"""
+	Database model for reader
+	"""
     __tablename__ = "reader"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -19,11 +22,17 @@ class ReaderBase(Base):
 
 # pydantic.BaseModel MODELS
 class ReaderRegisterDatas(BaseModel):
+	"""
+	Reader registration data
+	"""
 	password: str
 	email: str
 	username: str
 
 class ReaderLoginDatas(BaseModel):
+	"""
+	Reader login data
+	"""
 	password: str
 	email: str
 

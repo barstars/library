@@ -16,6 +16,13 @@ router = APIRouter(
 async def delete_book_post(DBDatas: DeleteBookDatas,
 						db: AsyncGenerator = Depends(get_db),
 						jwt: str = Cookie(None)):
+	"""
+    For delete book
+
+    db -- Session from the database
+    DBDatas -- Data delete
+    jwt -- The JWT ID from admin
+    """
 	if await is_admin(db, jwt):
 		bookDB = await is_book(db, DBDatas.id)
 		if bookDB:

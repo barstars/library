@@ -4,12 +4,15 @@ from app.main import app
 
 pytest_plugins = ('pytest_asyncio',)
 
+NUMBER = "1"
+ADMIN_USERNAME = "admin"
+ADMIN_EMAIL = "admin"
+ADMIN_PASSWORD = "admin"
 
 @pytest.mark.asyncio
 async def test_api():
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
-        number = "1"
-
+        
         # 1. Попытка регистрации администратора без JWT
         res = await client.post("/admin/register/", json={
             "username": "new_admin",
@@ -22,17 +25,17 @@ async def test_api():
 
         # 2. Регистрация существующего администратора без JWT
         res = await client.post("/admin/register/", json={
-            "username": "admin",
-            "email": "admin",
-            "password": "admin"
+            "username": ADMIN_USERNAME,
+            "email": ADMIN_EMAIL,
+            "password": ADMIN_PASSWORD
         })
         assert res.status_code == 400
         assert res.json()['success'] is False
 
         # 3. Логин администратора
         res = await client.post("/admin/login/", json={
-            "email": "admin",
-            "password": "admin"
+            "email": ADMIN_EMAIL,
+            "password": ADMIN_PASSWORD
         })
         assert res.status_code == 200
         jwt_admin = res.cookies.get("jwt")
@@ -42,16 +45,16 @@ async def test_api():
         assert jwt_admin is not None
 
         # 4. Создание читателя
-        res = await client.post("/reader/register/", json={"username":("pipl"+number), "email":("pipl"+number), "password":("pipl"+number)})
+        res = await client.post("/reader/register/", json={"username":("pipl"+NUMBER), "email":("pipl"+NUMBER), "password":("pipl"+NUMBER)})
         print(res.json())
         assert res.status_code == 200
 
         # 5. Регистрация книг
-        book_names = [("first"+number), ("second"+number), ("third"+number), ("fourth"+number)]
+        book_names = [("first"+NUMBER), ("second"+NUMBER), ("third"+NUMBER), ("fourth"+NUMBER)]
         for name in book_names:
             res = await client.post("/book/register/", json={
                 "name": name,
-                "author": "admin",
+                "author": ADMIN_USERNAME,
                 "copies": 5
             })
             assert res.status_code == 200
@@ -60,7 +63,7 @@ async def test_api():
         # 6. Попытка регистрации книги
         res = await client.post("/book/register/", json={
             "name": "invalid",
-            "author": "admin",
+            "author": ADMIN_USERNAME,
             "copies": -1
         })
         assert res.status_code == 400
@@ -68,8 +71,8 @@ async def test_api():
 
         # 7. Логин как читатель
         res = await client.post("/reader/login/", json={
-            "email": ("pipl"+number),
-            "password": ("pipl"+number)
+            "email": ("pipl"+NUMBER),
+            "password": ("pipl"+NUMBER)
         })
         assert res.status_code == 200
         assert res.cookies.get("jwt")
@@ -97,7 +100,7 @@ async def test_api():
         assert len(res.json()['data']) == 3
 
         # 11. Логин админа
-        res = await client.post("/admin/login/", json={"email": "admin", "password": "admin"})
+        res = await client.post("/admin/login/", json={"email": ADMIN_EMAIL, "password": ADMIN_PASSWORD})
         assert res.status_code == 200
         assert res.json()['success'] is True
         
@@ -114,8 +117,8 @@ async def test_api():
 
         # Логин как читатель
         res = await client.post("/reader/login/", json={
-            "email": ("pipl"+number),
-            "password": ("pipl"+number)
+            "email": ("pipl"+NUMBER),
+            "password": ("pipl"+NUMBER)
         })
         assert res.status_code == 200
         assert res.cookies.get("jwt")

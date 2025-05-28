@@ -12,6 +12,11 @@ router = APIRouter(
 
 @router.get("/")
 async def get_books(db: AsyncGenerator = Depends(get_db)):
+	"""
+    For get all books
+
+    db -- Session from the database
+    """
 	books = await get_all_books(db)
 	return JSONResponse(status_code=200, content={"success":True,"message":"Успех",
 		"data":books})

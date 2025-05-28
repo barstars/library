@@ -9,7 +9,15 @@ from typing import AsyncGenerator
 
 
 
-async def is_admin(db: AsyncGenerator, jwt: str) -> bool:
+async def is_admin(db: AsyncGenerator, jwt: str):
+	"""
+	Check whether it is an admin or not,
+	if the admin returns his data in the base type,
+	if not, then False
+
+	db -- Session from the database
+	jwt -- The JWT ID from admin
+	"""
 	data = await decode_access_token(jwt)
 	if data:
 		id_ = data.get("id")
@@ -25,7 +33,15 @@ async def is_admin(db: AsyncGenerator, jwt: str) -> bool:
 	else:
 		return False
 
-async def is_reader(db: AsyncGenerator, jwt: str) -> bool:
+async def is_reader(db: AsyncGenerator, jwt: str):
+	"""
+	Check whether it is an reader or not,
+	if the reader returns his data in the base type,
+	if not, then False
+
+	db -- Session from the database
+	jwt -- The JWT ID from reader
+	"""
 	data = await decode_access_token(jwt)
 	if data:
 		id_ = data.get("id")
@@ -41,7 +57,15 @@ async def is_reader(db: AsyncGenerator, jwt: str) -> bool:
 	else:
 		return False
 
-async def is_book(db: AsyncGenerator, jwt: str) -> bool:
+async def is_book(db: AsyncGenerator, jwt: str):
+	"""
+	Check whether it is an book or not,
+	if the book returns his data in the base type,
+	if not, then False
+
+	db -- Session from the database
+	jwt -- The JWT ID from book
+	"""
 	data = await decode_access_token(jwt)
 	if data:
 		id_ = data.get("id")
@@ -57,7 +81,15 @@ async def is_book(db: AsyncGenerator, jwt: str) -> bool:
 	else:
 		return False
 
-async def is_borrow(db: AsyncGenerator, jwt: str) -> bool:
+async def is_borrow(db: AsyncGenerator, jwt: str):
+	"""
+	Check whether it is an borrow or not,
+	if the borrow returns his data in the base type,
+	if not, then False
+	
+	db -- Session from the database
+	jwt -- The JWT ID from borrow
+	"""
 	data = await decode_access_token(jwt)
 	if data:
 		id_ = data.get("id")

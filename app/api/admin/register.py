@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request, Cookie
+from fastapi import APIRouter, Depends, Cookie
 from fastapi.responses import JSONResponse
 
 from app.models.admin import AdminRegisterDatas
@@ -15,9 +15,15 @@ router = APIRouter(
 
 @router.post("/")
 async def register_post(ARDatas: AdminRegisterDatas,
-						request: Request,
 						db: AsyncGenerator = Depends(get_db),
 						jwt: str = Cookie(None)):
+	"""
+	Register an admin
+	
+	ARDatas -- Registration data
+	db -- Session from the database
+	jwt -- The JWT ID from admin
+	"""
 	if await is_admin(db, jwt):
 		id_ = await register(db, ARDatas)
 		if id_:

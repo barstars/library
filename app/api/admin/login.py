@@ -15,8 +15,13 @@ router = APIRouter(
 
 @router.post("/")
 async def login_post(ALDatas: AdminLoginDatas,
-                    response: Response,
                     db: AsyncGenerator = Depends(get_db)):
+    """
+    Log in to the administrator
+
+    db -- Session from the database
+    ALDatas -- Data for login
+    """
     id_ = await login(db, ALDatas)
     if id_:
         id_ = str(id_)

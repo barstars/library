@@ -9,6 +9,9 @@ import uuid
 
 # DATA BASE MODELS
 class BorrowedBookBase(Base):
+    """
+    Database model for borrowed books
+    """
     __tablename__ = "borrowed_books"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -35,13 +38,22 @@ class BorrowedBookBase(Base):
 # pydantic.BaseModel MODELS
 
 class BorrowedBookDatas(BaseModel):
+    """
+    Datas for new borrow. Book datas from the client
+    """
 	id: str
 
 class BorrowNewBook(BaseModel):
+    """
+    Datas for new borrow
+    """
 	reader_id: uuid.UUID
 	book_id: uuid.UUID
 
 class ReturnBookDatas(BaseModel):
+    """
+    Datas for return book
+    """
     id: str
 
 #########################

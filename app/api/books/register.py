@@ -16,6 +16,13 @@ router = APIRouter(
 async def register_post(BRDatas: BookRegisterDatas,
 						db: AsyncGenerator = Depends(get_db),
 						jwt: str = Cookie(None)):
+	"""
+    For register the book
+
+	DBDatas -- Data for register book
+    db -- Session from the database
+    jwt -- The JWT ID from admin
+    """
 	if await is_admin(db, jwt):
 		id_ = await register(db, BRDatas)
 		if id_:

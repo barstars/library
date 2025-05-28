@@ -16,6 +16,13 @@ router = APIRouter(
 async def return_book(return_book_datas:ReturnBookDatas,
 					db: AsyncGenerator = Depends(get_db),
 					jwt: str = Cookie(None)):
+	"""
+    For return the book
+
+	return_book_datas -- Data for return book
+    db -- Session from the database
+    jwt -- The JWT ID from reader
+    """
 	reader_base = await is_reader(db, jwt)
 
 	if reader_base:

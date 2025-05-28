@@ -14,6 +14,12 @@ router = APIRouter(
 @router.get("/all")
 async def get_reader_borrows_post(db: AsyncGenerator = Depends(get_db),
 								jwt: str = Cookie(None)):
+	"""
+    For get all book borrows
+
+    db -- Session from the database
+    jwt -- The JWT ID from reader
+    """
 	reader_base = await is_reader(db, jwt)
 
 	if reader_base:
